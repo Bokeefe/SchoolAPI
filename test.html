@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script   src="http://code.jquery.com/jquery-3.1.1.js"   integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="   crossorigin="anonymous"></script>
+	<style type="text/css">
+		#infoTron {
+			width:100%;
+			height: 3rem;
+		}
+		body {
+			text-align: center;
+		}
+		button {
+			width: 80%;
+		}
+	</style>
+</head>
+<body>
+<h1>Student Name</h1>
+
+<div id="reader"></div>
+
+<br>
+
+<button id="grades">Get Grades</button>
+<br>
+
+<button id="homework">Get Homework</button>
+<br>
+
+<button id="sched">Get Schedule</button>
+<br>
+<textarea id="infoTron"></textarea>
+	<script>
+
+	/*
+	$('#grades').click(pull(gradesFile));
+	document.getElementById($('#reader').HTML=pull(gradesFile));	
+	*/
+
+	function pullGrades (page) {
+		$.get(page,function(res){
+			var grades = JSON.parse(res);
+			$('#reader').text(res);
+		});
+	}
+
+
+
+	$('#grades').click(function(){
+		pullGrades("/grades");
+		});
+	$('#homework').click(function(){
+		pullGrades("/homework");
+		});
+	//$('#sched').click(pullGrades("/sced"));
+
+	</script>
+</body>
+</html>

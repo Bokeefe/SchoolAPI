@@ -1,0 +1,24 @@
+var classes = [
+{
+	name: "english",
+	grade; "b",
+	homework: false
+},
+{
+	name: "programming",
+	grade: "A",
+	homework: true
+}
+];
+
+var classes2 = {
+	"english":{
+	grade: "B",
+	homework: false
+	},
+	"programming": {
+	grade: "A",
+	homework: true
+	}
+};
+classes2[className].grade;
