@@ -1,5 +1,0 @@
-var grades = {
-    algebra : "A",
-    "p.e." : "C",
-    english : "B"
-}

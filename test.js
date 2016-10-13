@@ -4,12 +4,32 @@ var fs = require('fs');
 var http = require("http");
 
 var grades = {
-    algebra : "A",
-    "p.e." : "C",
-    english : "B"
+    Algebra : "A",
+    "Phys Ed" : "C",
+    English : "B",
+    Math: "D",
+    Religion : "D-",
+    "Video Prod" : "A"
 	};
 
-var sched = ["algebra", "p.e.", "english"];
+var sched = {
+    Algebra :   "1st Period",
+    "Phys Ed" : "2nd Period",
+    English :  	"3rd Period",
+    Math:       "4th Period",
+    Religion :  "5th Period",
+    "Video Prod" : "6th Period"
+	};
+
+var homework = {
+    Algebra : false,
+    "Phys Ed" : false,
+    English : false,
+    Math: false,
+    Religion : false,
+    "Video Prod" : false
+	};
+
 
 /*
 	function pull(fileName){
