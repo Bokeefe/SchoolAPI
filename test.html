@@ -9,7 +9,7 @@
 	</script>
 	<style>
 		body {
-			text-align: center;
+			margin-left: 20%;
 		}
 		
 		button {
@@ -18,54 +18,105 @@
 			color: #999999;
 			outline: 20px;
 		}
+		#reader{
+			margin-right: 50%;
+		}
 
 	</style>
 
 </head>
 <body>
 	<h1>Brendan O'Keefe</h1>
-
-		<br>
-
+	<br>
 	<button id="grades">Get Grades</button>
-		<br>
-
+	<br>
 	<button id="homework">Get Homework</button>
+	<br>
+	<button id="sched">Get Schedule</button><br>
+
+	<br>
+	<div>
+		<h2 id=reader></h2>
+		<input id="newClass" value="Enter New Class"><br>
+		<button id="newClassSend">Add</button>
+	</div>
 		<br>
 
-	<button id="sched">Get Schedule</button>
-	
-		<br>
 
-	<h2 id=reader></h1>
 
 	<script>
 
-	/*
-	$('#grades').click(pull(gradesFile));
-	document.getElementById($('#reader').HTML=pull(gradesFile));	
-	*/
 
 	function pullGrades (page) {
 		$('#reader').html("");
 		$.get(page,function(res){
 			var obj = JSON.parse(res);
-			for(var key in obj){
-			$('#reader').append(key + " : " + obj[key]+"<br>");
+			for(var i in obj){
+			$('#reader').append(obj[i].name + " grade = " + obj[i].Grade + "<br>");
+			}
+		});
+	}
+	function pullHomework (page) {
+		$('#reader').html("");
+		$.get(page,function(res){
+			var obj = JSON.parse(res);
+			for(var i in obj){
+			$('#reader').append(obj[i].name + " HW done? = " + obj[i].hwDone + "<button id="+obj[i].name+">Mark "+obj[i].name+" Done</button>" + "<br>");
+				$("#" + obj[i].name).click(function(){
+				setToTrue($(this).attr('id'));
+				});
+			}
+
+
+		});
+	}
+	function setToTrue(className){
+		console.log(className);
+		$.post("/homeworkCheck",className,function(res){
+			pullHomework("/homework2");
+		});
+	}
+
+	function pullSched (arr) {
+		$('#reader').html("");
+		$.get(arr,function(res){
+			var obj = JSON.parse(res);
+			obj.sort(function(a,b){
+				return	a.Period-b.Period;
+
+			});
+			console.log(obj);
+			for(var i in obj){
+				var first = obj[i].Period;		
+				var squig = parseFloat(i) + 1;
+			$("#reader").append("Period: " + squig + " " + obj[i].name + "<br>");
 			}
 		});
 	}
 
+function hwDone(page){
+		$.post(page,function(req){
+		req.obj.hwDone = true;
+				console.log("help");
+	});
+}
+
 	$('#grades').click(function(){
-		pullGrades("/grades");
+		pullGrades("/homework2");
 		});
 	$('#homework').click(function(){
-		pullGrades("/homework");
+		pullHomework("/homework2");
 		});
 	$('#sched').click(function(){
-		pullGrades("/sched");
+		pullSched("/homework2");
 		});
 
+$('#newClassSend').click(function(){
+	var inputname= $('#newClass').val();
+	$.post("/homework2", inputname,function(res){
+		pullSched("/homework2");
+	});
+});
 
 	</script>
 </body>

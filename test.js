@@ -3,45 +3,14 @@
 var fs = require('fs');
 var http = require("http");
 
-var grades = {
-    Algebra : "A",
-    "Phys Ed" : "C",
-    English : "B",
-    Math: "D",
-    Religion : "D-",
-    "Video Prod" : "A"
-	};
-
-var sched = {
-    Algebra :   "1st Period",
-    "Phys Ed" : "2nd Period",
-    English :  	"3rd Period",
-    Math:       "4th Period",
-    Religion :  "5th Period",
-    "Video Prod" : "6th Period"
-	};
-
-var homework = {
-    Algebra : false,
-    "Phys Ed" : false,
-    English : false,
-    Math: false,
-    Religion : false,
-    "Video Prod" : false
-	};
-
-
-/*
-	function pull(fileName){
-	fs.readFile(fileName, function(err, data) {
-	if (err) {
-			console.log("Unable to read from file");
-		} else {
-			console.log(data); //toString();
-		}
-	});
-}
-*/
+var homework2 = [
+    {name: "Knowledge",Period: 2, Grade: "D", hwDone:false},
+    {name: "PhysEd", Period: 3, Grade: "F", hwDone:false},
+	{name: "English", Period: 1, Grade: "F", hwDone:false},
+	{name: "Math", Period: 5, Grade: "A", hwDone:false},
+	{name:"Religion", Period: 4, Grade: "C", hwDone:false},
+	{name: "VideoProd", Period: 6, Grade: "B", hwDone:false},
+	];
 
 var server = http.createServer((req, res) => {
 	if (req.url === "/test.html" || req.url === "/"){
@@ -49,36 +18,46 @@ var server = http.createServer((req, res) => {
 			res.write(data);
 			res.end();
 		});
-	} else if(req.url === "/grades") {
+	}else if(req.url === "/homework2") {
 		if (req.method === "GET") {
-			res.write(JSON.stringify(grades));
+			res.write(JSON.stringify(homework2));
+			res.end();
+		} else if (req.method === "POST") {
+			var queryData = "";
+			req.on('data', function(data) {
+				queryData += data; // need to understand querydata
+				if(queryData.length > 1e6) {//kill the connection if they are giving us moby dick
+					queryData = "";
+					res.writeHead(413, {'Content-Type': 'text/plain'}).end();
+					req.connection.destroy();
+				}
+			});
+
+			req.on('end', function(){
+				var store = {name: queryData, Period: homework2.length+1, Grade: "X", hwDone:false};
+				homework2.push(store);
+			});
 			res.end();
 		}
-	} else if(req.url === "/homework") {
-		if (req.method === "GET") {
-			res.write(JSON.stringify(homework));
+
+	}else if(req.url === "/homeworkCheck"){
+		if(req.method=== "POST"){
+			var className = "";
+			req.on('data',function(data){
+				className += data;
+			});
+			req.on('end',function(){
+				for(var i in homework2){
+					if(className === homework2[i].name){
+						homework2[i].hwDone = true;
+						return;
+					}
+				}
+				
+			});
 			res.end();
 		}
-	} else if(req.url === "/sched") {
-	if (req.method === "GET") {
-		res.write(JSON.stringify(sched));
-		res.end();
-		}
-	} else if (req.method === "POST") {
-		var queryData = "";
 
-		req.on('data', function(data) {
-			queryData += data; // need to understand querydata
-			if(queryData.length > 1e6) {
-				queryData = "";
-				res.writeHead(413, {'Content-Type': 'text/plain'}).end();
-				req.connection.destroy();
-			}
-		});
-
-		req.on('end', function() {
-			grades.push(queryData);
-		});
 	} else {
 		res.write("Something is weird!");
 		res.end();
